@@ -17,9 +17,11 @@
   - 首先判断版本记录的DB_TRX_ID字段与生成ReadView的事务对应的事务ID是否相等。如果相等，那就说明该版本的记录是在当前事务中生成的，自然也就能够被当前事务读取；否则进行第2步。
   - 如果版本记录的DB_TRX_ID字段小于范围ACTIVE_TRX_ID_RANGE，表明该版本记录是已提交事务修改的记录，即对当前事务可见；否则进行下一步。
   - 如果版本记录的DB_TRX_ID字段位于范围ACTIVE_TRX_ID_RANGE内，表明是未提交的事务，对当前事务不可见。
-- 生成ReadView的时机不同
+- 不同隔离级别，ReadView的生成时机不同
+  - 在Read Uncommitted隔离级别下，只需要读取版本链上最新版本的记录即可，即无需执行可见性比较算法
   - 在Read Committed隔离级别下，每次读取数据时都会生成ReadView
   - 在Repeatable Read隔离级别下，只会在事务首次读取数据时生成ReadView，之后的读操作都会沿用此ReadView
+  - 在Serializable隔离级别下，无论是读取数据时都会生成ReadView，还是事务首次读取数据时生成ReadView，ReadView内容都是一样的。
 
 ## 参考文档
 https://juejin.cn/post/6844904096378404872
