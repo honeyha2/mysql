@@ -5,8 +5,7 @@
 
 ## 写写问题
 - MVCC无法解决该问题，因为MVCC读取数据不加锁
-- 在RC隔离级别下，显示加X锁，SELECT ... FOR UPDATE，可以解决提交覆盖问题
-- 在RR隔离级别下，显示加S锁，SELECT ... LOCK IN SHARE MODE，可以解决提交覆盖问题
+- 在RC/RR隔离级别下，显示加X锁，SELECT ... FOR UPDATE，可以解决提交覆盖问题
 
 ## 读写问题
 - 标准实现方式：基于锁实现隔离级别
@@ -26,6 +25,11 @@
   - 在Read Committed隔离级别下，每次读取数据时都会生成ReadView
   - 在Repeatable Read隔离级别下，只会在事务首次读取数据时生成ReadView，之后的读操作都会沿用此ReadView
   - 在Serializable隔离级别下，无论是读取数据时都会生成ReadView，还是事务首次读取数据时生成ReadView，ReadView内容都是一样的。
+
+## tips
+。。。
+- 在RR隔离级别下，MVCC是快照读，读不加锁，读取后如果其他事务更新了数据，当前事务读取到的值还是旧数据的
+- 在RR隔离级别下，传统读加S锁的方式，阻塞了其他事务的更新，能保证当前事务执行过程中，数据不会被其他事务更新，
 
 ## 参考文档
 https://juejin.cn/post/6844904096378404872
